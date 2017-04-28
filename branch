@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-lines = `git branch -a | grep "#{ARGV[0]}" -i --color`.split("\n")
+lines = `git branch -a | grep -e "#{ARGV.join('.*')}" -i --color`.split("\n")
 lines.each do |line|
 	line.sub! "*", ""
 	line.strip!
