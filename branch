@@ -11,5 +11,6 @@ puts "q to quit"
 print "Which branch: "
 the_index = STDIN.gets.chomp
 exit if the_index == 'q'
-
-`git checkout #{lines[the_index.to_i]}`
+the_branch = lines[the_index.to_i]
+the_branch.gsub!("remotes/origin/", "")
+`git checkout #{the_branch}`
