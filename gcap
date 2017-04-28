@@ -8,7 +8,7 @@ puts `git status`
 commit_message = ARGV.join(" ").strip
 full_git_branch_path = `git symbolic-ref HEAD`.chomp
 git_branch_name = full_git_branch_path.split('/').last
-commit_prefix = git_branch_name.match(/(EMA|MMA)-[0-9]{1,}/)[0]
+commit_prefix = git_branch_name.match(/([A-Z]{1,})-[0-9]{1,}/)[0]
 
 puts "Branch name    : #{git_branch_name}"
 puts "Commit prefix  : #{commit_prefix}"
