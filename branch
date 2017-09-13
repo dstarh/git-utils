@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
-lines = `git branch -a | grep -e "#{ARGV.join('.*')}" -i --color`.split("\n")
+search = ARGV[0].dup << ".*"
+lines = if ARGV[1] == "--remote"
+	`git branch -a | grep -e "#{search}" -i --color`.split("\n")
+else
+	`git branch | grep -e "#{search}" -i --color`.split("\n")
+end
+
 lines.each do |line|
 	line.sub! "*", ""
 	line.strip!
