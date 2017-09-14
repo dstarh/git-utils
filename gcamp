@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+#
+#  Shortcut for git commit -am && push
+#  
+#  Automatically prefixed commit message with ticket number
+#
+puts `git status`
+commit_message = ARGV.join(" ").strip
+full_git_branch_path = `git symbolic-ref HEAD`.chomp
+git_branch_name = full_git_branch_path.split('/').last
+commit_prefix = git_branch_name.split('-')[0..1].join('-')
+puts "Branch name    : #{git_branch_name}"
+puts "Commit prefix  : #{commit_prefix}"
+if commit_message == ""
+  print "Commit message : "
+  commit_message = gets.chomp
+end
+if commit_message != ""
+  puts `git commit -am \"#{commit_prefix} #{commit_message}\" && git push`
+else
+  puts "Commit message required"
+end
