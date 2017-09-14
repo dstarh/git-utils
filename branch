@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
-
+#
+# search git branches by pattern (grep) and switch (checkout)
+#
+# borrowed from https://github.com/dstarh/git-utils/blob/master/branch
+#
 class String
   # colorization
   def colorize(color_code)
@@ -43,7 +47,7 @@ lines.each do |line|
 end
 
 lines.each_with_index do |line, index|	
-	puts index.to_s + " - " + colorize(line, search_raw)
+	puts index.to_s.rjust(3) + " - " + colorize(line, search_raw)
 end
 puts "q to quit"
 print "Which branch: "

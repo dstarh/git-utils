@@ -1,0 +1,19 @@
+#!/bin/bash
+
+git checkout production || { echo 'Could not switch to production branch' ; exit 1; }
+
+while getopts ":a" opt; do
+  case $opt in
+    a) for_real="yes"
+       ;;
+  esac
+done
+
+for branch in `git branch --remotes --merged | grep --invert-match HEAD | grep -v 'origin/[master|production]' | grep -v '201' | sed 's/origin\///' | sort`; do
+  snafu="git push origin --delete $branch"
+  if [ "yes" = "$for_real" ]; then
+    eval $snafu
+  else
+    echo $snafu
+  fi
+done

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+git checkout production || { echo 'Could not switch to production branch' ; exit 1; }
+
+for branch in `git branch --remotes --sort=committerdate | grep --invert-match HEAD | grep -v 'origin/[master|production]' | grep -v '201' | sed 's/origin\///'`; do
+  #
+  #  far too dangerous to automatically delete them so just list them
+  #
+  snafu="git push origin --delete $branch"
+  echo $snafu
+done
+
