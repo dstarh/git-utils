@@ -6,6 +6,11 @@ else
 	`git branch | grep -e "#{search}" -i --color`.split("\n")
 end
 
+unless lines.size > 0
+	puts "No matching branches!"
+	exit
+end
+
 lines.each do |line|
 	line.sub! "*", ""
 	line.strip!
