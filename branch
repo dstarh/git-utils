@@ -1,9 +1,14 @@
 #!/usr/bin/env ruby
-search = ARGV[0].dup << ".*"
+search = ARGV[0]
 lines = if ARGV[1] == "--remote"
 	`git branch -a | grep -e "#{search}" -i --color`.split("\n")
 else
 	`git branch | grep -e "#{search}" -i --color`.split("\n")
+end
+
+unless lines.size > 0
+	puts "No matching branches!"
+	exit
 end
 
 lines.each do |line|
