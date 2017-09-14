@@ -1,5 +1,31 @@
 #!/usr/bin/env ruby
+
+class String
+  # colorization
+  def colorize(color_code)
+    "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def yellow
+    colorize(33)
+  end
+end
+
+def colorize (line, search)
+	split = line.split(search)
+	colorized = ""
+	size = split.size
+	split.each_with_index do |section, index|
+		colorized << section 
+		colorized << search.yellow if index + 1 < size
+	end
+	colorized
+	
+end
+
+
 search = ARGV[0].dup << ".*"
+search_raw = ARGV[0]
 lines = if ARGV[1] == "--remote"
 	`git branch -a | grep -e "#{search}" -i --color`.split("\n")
 else
@@ -15,8 +41,9 @@ lines.each do |line|
 	line.sub! "*", ""
 	line.strip!
 end
-lines.each_with_index do |line, index|
-	puts index.to_s + " - " + line
+
+lines.each_with_index do |line, index|	
+	puts index.to_s + " - " + colorize(line, search_raw)
 end
 puts "q to quit"
 print "Which branch: "
