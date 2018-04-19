@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'optparse'
 
 class String
   # colorization
@@ -12,43 +13,61 @@ class String
 end
 
 def colorize (line, search)
-	split = line.split(search)
-	colorized = ""
-	size = split.size
-	split.each_with_index do |section, index|
-		colorized << section 
-		colorized << search.yellow if index + 1 < size
-	end
-	colorized
-	
+    line.gsub(search, search.yellow)
 end
+
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: branch branch-name [options]"
+
+  opts.on("--remote", "Include remote branches") do |r|
+    options[:remote] = r
+  end
+  opts.on("--pull", "Pull after checking out") do |r|
+    options[:pull] = r
+  end
+end.parse(ARGV)
 
 
 search = ARGV[0].dup << ".*"
 search_raw = ARGV[0]
-lines = if ARGV[1] == "--remote"
-	`git branch -a | grep -e "#{search}" -i --color`.split("\n")
+lines = if options[:remote]
+  `git branch -a | grep -e "#{search}" -i --color`.split("\n")
 else
-	`git branch | grep -e "#{search}" -i --color`.split("\n")
+  `git branch | grep -e "#{search}" -i --color`.split("\n")
 end
 
 unless lines.size > 0
-	puts "No matching branches!"
-	exit
+  puts "No matching branches!"
+  exit
 end
 
 lines.each do |line|
-	line.sub! "*", ""
-	line.strip!
+  line.sub! "*", ""
+  line.strip!
 end
 
-lines.each_with_index do |line, index|	
-	puts index.to_s + " - " + colorize(line, search_raw)
+if lines.size > 1 
+  lines.each_with_index do |line, index|  
+    puts index.to_s + " - " + colorize(line, search_raw)
+  end
+  puts "q to quit"
+  print "Which branch: "
+  the_index = STDIN.gets.chomp
+  exit if the_index == 'q'
+  the_branch = lines[the_index.to_i]
+  the_branch.gsub!("remotes/origin/", "")
+  `git checkout #{the_branch}`
+else
+  the_branch = lines[0]
+  the_branch.gsub!("remotes/origin/", "")
+  `git checkout #{the_branch}`
 end
-puts "q to quit"
-print "Which branch: "
-the_index = STDIN.gets.chomp
-exit if the_index == 'q'
-the_branch = lines[the_index.to_i]
-the_branch.gsub!("remotes/origin/", "")
-`git checkout #{the_branch}`
+
+if options[:pull]
+  `git pull`
+end
+
+
+
